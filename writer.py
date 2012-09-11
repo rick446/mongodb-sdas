@@ -19,42 +19,30 @@ sock.setsockopt(zmq.SUBSCRIBE, '')
 conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
-writes = 0
 PREALLOC=eval(sys.argv[1])
+DILATION=300
 
 def main():
-    global writes
-    gl = None
-    conn.test.hits.drop()
+    coll = conn.test.hits
+    coll.drop()
     fp = open('times.csv', 'w')
     while True:
-        ts, = struct.unpack('l', sock.recv())
-        if gl is not None:
-            gl.kill()
-            minute = dt.hour * 60 + dt.minute
-            if True or dt.minute == 0:
-                csv_line = '%d,%d\n' % (
-                    minute, writes)
-                line = '%d,%d %s\n' % (
-                    minute, writes,
-                    '*'*(writes/10))
-                fp.write(csv_line)
-                fp.flush()
-                print line,
-                writes = 0
-        dt = datetime.utcfromtimestamp(ts)
-        gl = gevent.spawn_link_exception(fast_writer, dt)
-
-def fast_writer(dt):
-    global writes
-    coll = conn.test.hits
-    while True:
-        record_hit(coll, dt, random.choice(measures))
-        writes += 1
-        if random.random() < 0.1:
-            gevent.sleep(0)
-        if random.random() < 0.05:
+        # Simulate a minute
+        end = 60.0 * (1.0 / DILATION) + time.time()
+        writes = 0
+        while time.time() < end:
+            dt = datetime.utcfromtimestamp(time.time() * DILATION)
+            record_hit(coll, dt, random.choice(measures))
+            writes += 1
             conn.test.command('getLastError')
+        # Write that minute's results
+        minute = dt.hour * 60 + dt.minute
+        csv_line = '%d,%d\n' % (
+            minute, writes)
+        line = '%d,%d %s' % (minute, writes,'*'*(writes/10))
+        fp.write(csv_line)
+        fp.flush()
+        print line
 
 def preallocate(coll, dt, measure):
     sdate = dt.strftime('%Y%m%d')
