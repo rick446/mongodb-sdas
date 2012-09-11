@@ -41,10 +41,11 @@ def main():
         conn.test.command('getLastError')
 
         # Write that minute's results
+        wps = writes / float(sim_now - sim_min_begin)
         minute = sim_dt.hour * 60 + sim_dt.minute
-        csv_line = '%d,%d\n' % (
-            minute, writes)
-        line = '%d,%d %s' % (minute, writes,'*'*(writes/10))
+        csv_line = '%d,%f\n' % (
+            minute, wps)
+        line = '%d,%f %s' % (minute, wps,'*'*(writes/10))
         fp.write(csv_line)
         fp.flush()
         print line
