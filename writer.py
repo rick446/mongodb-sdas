@@ -21,13 +21,14 @@ conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
 PREALLOC=eval(sys.argv[1])
-DILATION=200
+DILATION=300
 
 def main():
     coll = conn.test.hits
     coll.drop()
     fp = open('times.csv', 'w')
     rt_begin = sim_now = tm_time.time()
+    lines = 0
     while True:
         # Simulate a minute
         writes = 0
@@ -49,8 +50,10 @@ def main():
             minute, wps)
         line = '%d,%f %s' % (minute, wps,'*'*(writes/10))
         fp.write(csv_line)
-        fp.flush()
-        print line
+        if lines % 10 == 0:
+            fp.flush()
+            print line
+        lines += 1
 
 def preallocate(coll, dt, measure):
     sdate = dt.strftime('%Y%m%d')
