@@ -1,21 +1,12 @@
 import sys
-import struct
+from itertools import cycle
 import random
 import time as tm_time
 from datetime import datetime, time, timedelta
 
-import gevent.monkey
-gevent.monkey.patch_all()
 import pymongo
 
-from gevent_zeromq import zmq
-
 measures = [ 'measure-%d' % i for i in xrange(100) ]
-
-context = zmq.Context.instance()
-sock = context.socket(zmq.SUB)
-sock.connect('tcp://localhost:5555')
-sock.setsockopt(zmq.SUBSCRIBE, '')
 
 conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
@@ -29,6 +20,7 @@ def main():
     fp = open('times.csv', 'w')
     rt_begin = sim_now = tm_time.time()
     lines = 0
+    measure_iter = cycle(measures)
     while True:
         # Simulate a minute
         writes = 0
@@ -38,7 +30,7 @@ def main():
             rt_elapsed = tm_time.time() - rt_begin
             sim_now = rt_begin + (rt_elapsed * DILATION)
             sim_dt = datetime.utcfromtimestamp(sim_now)
-            record_hit(coll, sim_dt, random.choice(measures))
+            record_hit(coll, sim_dt, measure_iter.next())
             writes += 1
             if writes % 100 == 0:
                 conn.test.command('getLastError')
