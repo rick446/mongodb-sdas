@@ -8,7 +8,7 @@ import pymongo
 
 from gevent_zeromq import zmq
 
-measures = [ 'measure-%d' % i for i in xrange(10000) ]
+measures = [ 'measure-%d' % i for i in xrange(1000) ]
 
 context = zmq.Context.instance()
 sock = context.socket(zmq.SUB)
