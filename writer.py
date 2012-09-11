@@ -16,7 +16,7 @@ sock.connect('tcp://localhost:5555')
 sock.setsockopt(zmq.SUBSCRIBE, '')
 
 conn = pymongo.Connection(
-    'mongodb://ip-10-243-26-40.ec2.internal:27017')
+    'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
 writes = 0
 
