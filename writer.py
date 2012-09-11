@@ -39,6 +39,8 @@ def main():
             sim_now = rt_begin + (rt_elapsed * DILATION)
             sim_dt = datetime.utcfromtimestamp(sim_now)
             record_hit(coll, sim_dt, random.choice(measures))
+            if writes % 100 == 0:
+                conn.test.command('getLastError')
             writes += 1
         conn.test.command('getLastError')
         rt_min_elapsed = tm_time.time() - rt_min_begin
