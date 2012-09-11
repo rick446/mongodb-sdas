@@ -27,17 +27,21 @@ def main():
     coll = conn.test.hits
     coll.drop()
     fp = open('times.csv', 'w')
+    rt_begin = sim_now = tm_time.time()
     while True:
         # Simulate a minute
-        end = 60.0 * (1.0 / DILATION) + tm_time.time()
         writes = 0
-        while time.time() < end:
-            dt = datetime.utcfromtimestamp(tm_time.time() * DILATION)
-            record_hit(coll, dt, random.choice(measures))
+        sim_min_begin = sim_now
+        while sim_now - sim_min_begin < 60.0:
+            rt_elapsed = tm_time.time() - rt_begin
+            sim_now = rt_begin + (rt_elapsed * DILATION)
+            sim_dt = datetime.utcfromtimestamp(sim_now)
+            record_hit(coll, sim_dt, random.choice(measures))
             writes += 1
             conn.test.command('getLastError')
+
         # Write that minute's results
-        minute = dt.hour * 60 + dt.minute
+        minute = sim_dt.hour * 60 + sim_dt.minute
         csv_line = '%d,%d\n' % (
             minute, writes)
         line = '%d,%d %s' % (minute, writes,'*'*(writes/10))
