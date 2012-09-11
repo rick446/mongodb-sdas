@@ -8,7 +8,7 @@ import pymongo
 
 from gevent_zeromq import zmq
 
-measures = [ 'measure-%d' % i for i in xrange(1000) ]
+measures = [ 'measure-%d' % i for i in xrange(10000) ]
 
 context = zmq.Context.instance()
 sock = context.socket(zmq.SUB)
@@ -29,7 +29,9 @@ def main():
         if gl is not None:
             gl.kill()
             if True or dt.minute == 0:
-                line = '%d,%d\n' % (dt.hour * 60 + dt.minute, writes)
+                line = '%d,%d %s\n' % (
+                    dt.hour * 60 + dt.minute, writes,
+                    '*'*(writes/10))
                 fp.write(line)
                 fp.flush()
                 print line,
