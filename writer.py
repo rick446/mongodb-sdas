@@ -29,7 +29,7 @@ def main():
         if gl is not None:
             gl.kill()
             if True or dt.minute == 0:
-                csv_line = '%d,%d %s\n' % (
+                csv_line = '%d,%d\n' % (
                     dt.hour * 60 + dt.minute, writes)
                 line = '%d,%d %s\n' % (
                     dt.hour * 60 + dt.minute, writes,
