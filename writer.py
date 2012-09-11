@@ -19,7 +19,6 @@ def main():
     coll.drop()
     fp = open('times.csv', 'w')
     rt_begin = sim_now = tm_time.time()
-    lines = 0
     measure_iter = cycle(measures)
     while True:
         # Simulate a minute
@@ -44,10 +43,9 @@ def main():
             minute, wps)
         line = '%d,%f %s' % (minute, wps,'*'*(writes/10))
         fp.write(csv_line)
-        if lines % 10 == 0:
+        if minute % 10 == 0:
             fp.flush()
             print line
-        lines += 1
 
 def preallocate(coll, dt, measure):
     sdate = dt.strftime('%Y%m%d')
