@@ -27,7 +27,8 @@ exec sys.argv[1]
 def main():
     global writes
     gl = None
-    fp = open('times.csv', 'a')
+    conn.test.hits.drop()
+    fp = open('times.csv', 'w')
     while True:
         ts, = struct.unpack('l', sock.recv())
         if gl is not None:
