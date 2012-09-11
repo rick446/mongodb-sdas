@@ -29,10 +29,12 @@ def main():
         if gl is not None:
             gl.kill()
             if True or dt.minute == 0:
+                csv_line = '%d,%d %s\n' % (
+                    dt.hour * 60 + dt.minute, writes)
                 line = '%d,%d %s\n' % (
                     dt.hour * 60 + dt.minute, writes,
                     '*'*(writes/10))
-                fp.write(line)
+                fp.write(csv_line)
                 fp.flush()
                 print line,
                 writes = 0
