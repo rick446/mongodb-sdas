@@ -93,8 +93,8 @@ def record_hit(coll, dt, measure):
         { '_id': id, 'metadata': metadata },
         { '$inc': {
                 'daily': 1,
-                'hourly.%d' % dt.hour: 1,
-                'minute.%d' % dt.minute: 1 } },
+                'hourly.%.2d' % dt.hour: 1,
+                'minute.%.2d' % dt.minute: 1 } },
         upsert=True)
 
 if __name__ == '__main__':
