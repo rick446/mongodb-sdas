@@ -37,7 +37,7 @@ def main():
                     minute, writes)
                 line = '%d,%d %s\n' % (
                     minute, writes,
-                    '*'*(writes/100))
+                    '*'*(writes/10))
                 fp.write(csv_line)
                 fp.flush()
                 print line,
