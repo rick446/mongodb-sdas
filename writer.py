@@ -78,7 +78,8 @@ def preallocate(coll, dt, measure):
     coll.update(
         { '_id': id },
         update,
-        upsert=True)
+        upsert=True,
+        safe=True)
 
 def record_hit(coll, dt, measure):
     if PREALLOC and random.random() < (1.0/150.0):
