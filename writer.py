@@ -38,7 +38,7 @@ def main():
             sim_dt = datetime.utcfromtimestamp(sim_now)
             record_hit(coll, sim_dt, random.choice(measures))
             writes += 1
-            conn.test.command('getLastError')
+        conn.test.command('getLastError')
 
         # Write that minute's results
         minute = sim_dt.hour * 60 + sim_dt.minute
