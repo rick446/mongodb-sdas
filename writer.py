@@ -57,7 +57,6 @@ def fast_writer(dt):
             conn.test.command('getLastError')
 
 def preallocate(coll, dt, measure):
-    print 'PREALLOC', dt, measure
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
         date=datetime.combine(
