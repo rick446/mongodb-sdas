@@ -12,6 +12,7 @@ conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
 PREALLOC=eval(sys.argv[1])
+HIER=True
 DILATION=300
 
 def main():
@@ -29,7 +30,10 @@ def main():
             rt_elapsed = tm_time.time() - rt_begin
             sim_now = rt_begin + (rt_elapsed * DILATION)
             sim_dt = datetime.utcfromtimestamp(sim_now)
-            record_hit(coll, sim_dt, measure_iter.next())
+            if HIER:
+                record_hit_hier(coll, sim_dt, measure_iter.next())
+            else:
+                record_hit(coll, sim_dt, measure_iter.next())
             writes += 1
             if writes % 100 == 0:
                 conn.test.command('getLastError')
@@ -89,6 +93,50 @@ def record_hit(coll, dt, measure):
                 'daily': 1,
                 'hourly.%.2d' % dt.hour: 1,
                 'minute.%.4d' % minute: 1 } },
+        upsert=True)
+
+def preallocate_hier(coll, dt, measure):
+    sdate = dt.strftime('%Y%m%d')
+    metadata = dict(
+        date=datetime.combine(
+            dt.date(),
+            time.min),
+        measure=measure)
+    id='%s/%s' % (sdate, measure)
+    hourly_doc = dict(
+        ('hourly.%.2d' % i, 0)
+        for i in range(24))
+    minute_doc = dict(
+        ('minute.%.2d.%.2d' % (h,m), 0)
+        for h in range(24)
+        for m in range(60))
+    update = {
+        '$set': { 'metadata': metadata },
+        '$inc': { 'daily': 0 } }
+    update['$inc'].update(hourly_doc)
+    update['$inc'].update(minute_doc)
+    coll.update(
+        { '_id': id },
+        update,
+        upsert=True,
+        safe=True)
+
+def record_hit_hier(coll, dt, measure):
+    if PREALLOC and random.random() < (1.0/1500.0):
+        preallocate_hier(coll, dt + timedelta(days=1), measure)
+    sdate = dt.strftime('%Y%m%d')
+    metadata = dict(
+        date=datetime.combine(
+            dt.date(),
+            time.min),
+        measure=measure)
+    id='%s/%s' % (sdate, measure)
+    coll.update(
+        { '_id': id, 'metadata': metadata },
+        { '$inc': {
+                'daily': 1,
+                'hourly.%.2d' % dt.hour: 1,
+                ('minute.%.2d.%.2d' % (dt.hour, dt.minute)): 1 } },
         upsert=True)
 
 if __name__ == '__main__':

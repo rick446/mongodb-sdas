@@ -56,7 +56,7 @@ def fast_writer(dt):
         if random.random() < 0.05:
             conn.test.command('getLastError')
 
-def preallocate(coll, dt, measure):
+def preallocate_hier(coll, dt, measure):
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
         date=datetime.combine(
@@ -82,9 +82,9 @@ def preallocate(coll, dt, measure):
         upsert=True,
         safe=True)
 
-def record_hit(coll, dt, measure):
+def record_hit_hier(coll, dt, measure):
     if PREALLOC and random.random() < (1.0/1500.0):
-        preallocate(coll, dt + timedelta(days=1), measure)
+        preallocate_hier(coll, dt + timedelta(days=1), measure)
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
         date=datetime.combine(
