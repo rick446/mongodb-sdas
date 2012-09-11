@@ -14,7 +14,7 @@ def main():
     ts = int(time.time())
     while True:
         sock.send(struct.pack('l', ts))
-        gevent.sleep(1)
+        gevent.sleep(0.2)
         ts += 60
 
 if __name__ == '__main__':
