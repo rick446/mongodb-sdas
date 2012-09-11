@@ -9,7 +9,7 @@ import pymongo
 
 from gevent_zeromq import zmq
 
-measures = [ 'measure-%d' % i for i in xrange(1000) ]
+measures = [ 'measure-%d' % i for i in xrange(100) ]
 
 context = zmq.Context.instance()
 sock = context.socket(zmq.SUB)
@@ -82,7 +82,7 @@ def preallocate(coll, dt, measure):
         safe=True)
 
 def record_hit(coll, dt, measure):
-    if PREALLOC and random.random() < (1.0/250.0):
+    if PREALLOC and random.random() < (1.0/500.0):
         preallocate(coll, dt + timedelta(days=1), measure)
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
