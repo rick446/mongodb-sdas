@@ -72,9 +72,9 @@ def preallocate(coll, dt, measure):
         for i in range(1440))
     update = {
         '$set': { 'metadata': metadata },
-        '$inc': { 'daily': 0,
-                  'hourly': hourly_doc,
-                  'minute': minute_doc } }
+        '$inc': { 'daily': 0 } }
+    update['$inc'].update(hourly_doc)
+    update['$inc'].update(minute_doc)
     result = coll.update(
         { '_id': id },
         update,
