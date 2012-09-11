@@ -82,7 +82,7 @@ def preallocate(coll, dt, measure):
         upsert=True)
 
 def record_hit(coll, dt, measure):
-    if PREALLOC and random.random() < (1.0/72.0):
+    if PREALLOC and random.random() < (1.0/200.0):
         preallocate(coll, dt + timedelta(days=1), measure)
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
