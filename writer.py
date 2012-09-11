@@ -45,7 +45,7 @@ def fast_writer(dt):
         writes += 1
         if random.random() < 0.1:
             gevent.sleep(0)
-        if random.random() < 0.01:
+        if random.random() < 0.05:
             conn.test.command('getLastError')
 
 def record_hit(coll, dt, measure):
