@@ -20,9 +20,7 @@ conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
 writes = 0
-PREALLOC=False
-
-exec sys.argv[1]
+PREALLOC=True
 
 def main():
     global writes
