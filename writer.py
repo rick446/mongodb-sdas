@@ -32,12 +32,13 @@ def main():
         ts, = struct.unpack('l', sock.recv())
         if gl is not None:
             gl.kill()
+            minute = dt.hour * 60 + dt.minute
             if True or dt.minute == 0:
                 csv_line = '%d,%d\n' % (
-                    dt.hour * 60 + dt.minute, writes)
+                    minute, writes)
                 line = '%d,%d %s\n' % (
-                    dt.hour * 60 + dt.minute, writes,
-                    '*'*(writes/10))
+                    minute, writes,
+                    '*'*(writes/100))
                 fp.write(csv_line)
                 fp.flush()
                 print line,
@@ -68,7 +69,7 @@ def preallocate(coll, dt, measure):
         ('hourly.%.2d' % i, 0)
         for i in range(24))
     minute_doc = dict(
-        ('minute.%.2d' % i, 0)
+        ('minute.%.4d' % i, 0)
         for i in range(1440))
     update = {
         '$inc': { 'daily': 0,
@@ -89,12 +90,13 @@ def record_hit(coll, dt, measure):
             time.min),
         measure=measure)
     id='%s/%s' % (sdate, measure)
+    minute = dt.hour * 60 + dt.minute
     coll.update(
         { '_id': id, 'metadata': metadata },
         { '$inc': {
                 'daily': 1,
                 'hourly.%.2d' % dt.hour: 1,
-                'minute.%.2d' % dt.minute: 1 } },
+                'minute.%.4d' % minute: 1 } },
         upsert=True)
 
 if __name__ == '__main__':
