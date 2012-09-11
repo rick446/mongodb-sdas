@@ -21,7 +21,7 @@ conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
 PREALLOC=eval(sys.argv[1])
-DILATION=300
+DILATION=200
 
 def main():
     coll = conn.test.hits
@@ -32,6 +32,7 @@ def main():
         # Simulate a minute
         writes = 0
         sim_min_begin = sim_now
+        rt_min_begin = tm_time.time()
         while sim_now - sim_min_begin < 60.0:
             rt_elapsed = tm_time.time() - rt_begin
             sim_now = rt_begin + (rt_elapsed * DILATION)
@@ -39,9 +40,10 @@ def main():
             record_hit(coll, sim_dt, random.choice(measures))
             writes += 1
         conn.test.command('getLastError')
+        rt_min_elapsed = tm_time.time() - rt_min_begin
 
         # Write that minute's results
-        wps = writes / float(sim_now - sim_min_begin)
+        wps = writes / float(rt_min_elapsed)
         minute = sim_dt.hour * 60 + sim_dt.minute
         csv_line = '%d,%f\n' % (
             minute, wps)
