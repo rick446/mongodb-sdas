@@ -1,6 +1,6 @@
 import struct
 import random
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 import gevent.monkey
 gevent.monkey.patch_all()
@@ -76,6 +76,8 @@ def preallocate(coll, dt, measure):
         upsert=True)
 
 def record_hit(coll, dt, measure):
+    if random.random() < (1.0/72.0):
+        preallocate(coll, dt + timedelta(days=1), measure)
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
         date=datetime.combine(
