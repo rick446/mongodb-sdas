@@ -75,10 +75,12 @@ def preallocate(coll, dt, measure):
         '$inc': { 'daily': 0,
                   'hourly': hourly_doc,
                   'minute': minute_doc } }
-    coll.update(
+    result = coll.update(
         { '_id': id },
         update,
-        upsert=True)
+        upsert=True,
+        safe=True)
+    print result
 
 def record_hit(coll, dt, measure):
     if PREALLOC and random.random() < (1.0/200.0):
