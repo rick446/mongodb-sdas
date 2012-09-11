@@ -50,6 +50,29 @@ def fast_writer(dt):
         if random.random() < 0.05:
             conn.test.command('getLastError')
 
+def preallocate(coll, dt, measure):
+    sdate = dt.strftime('%Y%m%d')
+    metadata = dict(
+        date=datetime.combine(
+            dt.date(),
+            time.min),
+        measure=measure)
+    id='%s/%s' % (sdate, measure)
+    hourly_doc = dict(
+        ('hourly.%.2d' % i, 0)
+        for i in range(24))
+    minute_doc = dict(
+        ('minute.%.2d' % i, 0)
+        for i in range(1440))
+    update = {
+        '$inc': { 'daily': 0,
+                  'hourly': hourly_doc,
+                  'minute': minute_doc } }
+    coll.update(
+        { '_id': id, 'metadata': metadata },
+        update,
+        upsert=True)
+
 def record_hit(coll, dt, measure):
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
