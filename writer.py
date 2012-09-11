@@ -1,6 +1,7 @@
 import sys
 import struct
 import random
+import time as tm_time
 from datetime import datetime, time, timedelta
 
 import gevent.monkey
@@ -28,10 +29,10 @@ def main():
     fp = open('times.csv', 'w')
     while True:
         # Simulate a minute
-        end = 60.0 * (1.0 / DILATION) + time.time()
+        end = 60.0 * (1.0 / DILATION) + tm_time.time()
         writes = 0
         while time.time() < end:
-            dt = datetime.utcfromtimestamp(time.time() * DILATION)
+            dt = datetime.utcfromtimestamp(tm_time.time() * DILATION)
             record_hit(coll, dt, random.choice(measures))
             writes += 1
             conn.test.command('getLastError')
