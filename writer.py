@@ -1,3 +1,4 @@
+import sys
 import struct
 import random
 from datetime import datetime, time, timedelta
@@ -19,6 +20,9 @@ conn = pymongo.Connection(
     'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
 writes = 0
+PREALLOC=False
+
+exec sys.argv[1]
 
 def main():
     global writes
@@ -76,7 +80,7 @@ def preallocate(coll, dt, measure):
         upsert=True)
 
 def record_hit(coll, dt, measure):
-    if random.random() < (1.0/72.0):
+    if PREALLOC and random.random() < (1.0/72.0):
         preallocate(coll, dt + timedelta(days=1), measure)
     sdate = dt.strftime('%Y%m%d')
     metadata = dict(
