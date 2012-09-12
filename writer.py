@@ -8,11 +8,20 @@ import pymongo
 
 measures = [ 'measure-%d' % i for i in xrange(100) ]
 
-conn = pymongo.Connection(
-    'mongodb://ip-10-190-131-134.ec2.internal:27017')
+conn = pymongo.Connection(sys.argv[1])
+#    'mongodb://ip-10-190-131-134.ec2.internal:27017')
 
-PREALLOC=eval(sys.argv[1])
-HIER=True
+option = eval(sys.argv[2])
+if option == 0:
+    PREALLOC=False
+    HIER=False
+elif option == 1:
+    PREALLOC=True
+    HIER=False
+elif option == 2:
+    PREALLOC=True
+    HIER=True
+
 DILATION=300
 
 def main():
